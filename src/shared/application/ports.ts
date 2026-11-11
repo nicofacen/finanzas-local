@@ -11,8 +11,8 @@ export interface BackupDocument {
 export interface IBackupService {
   exportJson(): Promise<BackupDocument>;
   restoreJson(doc: unknown): Promise<Result<{ rows: number }, DomainError>>;
-  /** Copia en caliente del archivo .db (API de backup de SQLite). Devuelve la ruta. */
-  snapshotDatabaseFile(): Promise<Result<string, DomainError>>;
+  /** Archivo SQLite completo (bytes) para descargar como copia binaria. */
+  exportDatabaseFile(): Promise<Uint8Array>;
 }
 
 export interface IDataMaintenance {

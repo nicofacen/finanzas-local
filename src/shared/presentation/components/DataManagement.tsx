@@ -2,20 +2,46 @@
 
 import { Database, Download, HardDriveDownload, RotateCcw, Sparkles, Upload } from "lucide-react";
 import { useRef } from "react";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from "@/components/ui/primitives";
-import { resetDataAction, restoreBackupAction, seedDemoAction, snapshotDatabaseAction } from "../systemActions";
+import {
+  exportBackupAction,
+  exportDatabaseFileAction,
+  resetDataAction,
+  restoreBackupAction,
+  seedDemoAction,
+} from "../systemActions";
 import { useAction } from "../useAction";
 
-export function DataManagement({ databasePath }: { databasePath: string }) {
+function download(content: BlobPart, filename: string, type: string) {
+  const url = URL.createObjectURL(new Blob([content], { type }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+const stamp = () => new Date().toISOString().slice(0, 10);
+
+export function DataManagement({ location }: { location: string }) {
   const seed = useAction(seedDemoAction, { success: (d) => `Demo cargada: ${d.transactions} movimientos` });
   const reset = useAction(resetDataAction, { success: "Datos eliminados" });
   const restore = useAction(restoreBackupAction, { success: (d) => `Backup restaurado (${d.rows} filas)` });
-  const snapshot = useAction(snapshotDatabaseAction, { success: (d) => `Copia guardada en ${d.path}` });
+  const exportJson = useAction(exportBackupAction, { success: "Backup descargado" });
+  const exportFile = useAction(exportDatabaseFileAction, { success: "Archivo SQLite descargado" });
   const fileRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="lg:col-span-2">
+        <CardContent className="pt-5 text-sm text-muted-foreground">
+          Tus datos se guardan <strong className="text-foreground">solo en este navegador</strong> ({location}). Nadie más puede verlos,
+          pero si borrás los datos del sitio o cambiás de navegador/dispositivo, no estarán. <strong className="text-foreground">Descargá un backup
+          cada tanto.</strong>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><Sparkles className="size-4" /> Datos de demostración</CardTitle>
@@ -59,9 +85,16 @@ export function DataManagement({ databasePath }: { databasePath: string }) {
           <CardDescription>Archivo portable con todas las tablas. Restaurar reemplaza los datos actuales.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
-          <a href="/api/backup" className={buttonVariants({ variant: "outline" })}>
+          <Button
+            variant="outline"
+            disabled={exportJson.pending}
+            onClick={async () => {
+              const r = await exportJson.run(undefined);
+              if (r.ok) download(JSON.stringify(r.data, null, 2), `finanzas-backup-${stamp()}.json`, "application/json");
+            }}
+          >
             <Download /> Descargar backup
-          </a>
+          </Button>
           <Button variant="outline" disabled={restore.pending} onClick={() => fileRef.current?.click()}>
             <Upload /> Restaurar desde archivo
           </Button>
@@ -82,12 +115,19 @@ export function DataManagement({ databasePath }: { databasePath: string }) {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Database className="size-4" /> Copia del archivo SQLite</CardTitle>
-          <CardDescription className="break-all">Base local: {databasePath}</CardDescription>
+          <CardTitle className="flex items-center gap-2"><Database className="size-4" /> Archivo SQLite</CardTitle>
+          <CardDescription>Copia binaria de toda la base, abrible con cualquier visor de SQLite.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button variant="outline" disabled={snapshot.pending} onClick={() => void snapshot.run(undefined)}>
-            <HardDriveDownload /> Crear copia en data/backups
+          <Button
+            variant="outline"
+            disabled={exportFile.pending}
+            onClick={async () => {
+              const r = await exportFile.run(undefined);
+              if (r.ok) download(r.data.bytes as BlobPart, `finanzas-${stamp()}.sqlite`, "application/octet-stream");
+            }}
+          >
+            <HardDriveDownload /> Descargar archivo .sqlite
           </Button>
         </CardContent>
       </Card>

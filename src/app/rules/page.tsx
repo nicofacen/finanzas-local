@@ -1,21 +1,25 @@
+"use client";
+
 import { RulesBoard } from "@/modules/rules/presentation/RulesBoard";
-import { getContainer } from "@/shared/infrastructure/di/container";
-import { unwrapQuery } from "@/shared/presentation/action";
 import { PageHeader } from "@/shared/presentation/components/MonthNav";
+import { Query } from "@/shared/presentation/components/Query";
+import { unwrapQuery } from "@/shared/presentation/data";
 
-export const dynamic = "force-dynamic";
-
-export default async function RulesPage() {
-  const c = getContainer();
-  const [rules, categories, accounts] = await Promise.all([
-    c.rules.listRules.execute().then(unwrapQuery),
-    c.budgets.listCategories.execute().then(unwrapQuery),
-    c.accounts.listAccounts.execute().then(unwrapQuery),
-  ]);
+export default function RulesPage() {
   return (
-    <>
-      <PageHeader title="Reglas de categorización" description="Motor local basado en Specifications combinables (Y / O)" />
-      <RulesBoard rules={rules} categories={categories} accounts={accounts.map((a) => ({ id: a.id, name: a.name }))} />
-    </>
+    <Query
+      load={async (c) => ({
+        rules: unwrapQuery(await c.rules.listRules.execute()),
+        categories: unwrapQuery(await c.budgets.listCategories.execute()),
+        accounts: unwrapQuery(await c.accounts.listAccounts.execute()),
+      })}
+    >
+      {({ rules, categories, accounts }) => (
+        <>
+          <PageHeader title="Reglas de categorización" description="Motor local basado en Specifications combinables (Y / O)" />
+          <RulesBoard rules={rules} categories={categories} accounts={accounts.map((a) => ({ id: a.id, name: a.name }))} />
+        </>
+      )}
+    </Query>
   );
 }

@@ -1,12 +1,18 @@
-import { YearMonth } from "@/shared/domain";
-import { getContainer } from "@/shared/infrastructure/di/container";
+"use client";
 
-/** Resuelve el mes de la URL (?month=AAAA-MM) o el mes actual. */
-export function resolveMonth(param: string | string[] | undefined): YearMonth {
-  const raw = Array.isArray(param) ? param[0] : param;
+import { useSearchParams } from "next/navigation";
+import { LocalDate, YearMonth } from "@/shared/domain";
+
+/** Mes de la URL (?month=AAAA-MM) o el mes actual. Requiere un <Suspense> ancestro. */
+export function useMonth(): YearMonth {
+  const raw = useSearchParams().get("month");
   if (raw) {
     const parsed = YearMonth.parse(raw);
     if (parsed.ok) return parsed.value;
   }
-  return getContainer().kernel.clock.today().yearMonth;
+  return LocalDate.fromDate(new Date()).yearMonth;
+}
+
+export function todayISO(): string {
+  return LocalDate.fromDate(new Date()).toISO();
 }

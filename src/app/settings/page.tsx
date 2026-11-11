@@ -1,15 +1,18 @@
-import { getContainer } from "@/shared/infrastructure/di/container";
+"use client";
+
 import { DataManagement } from "@/shared/presentation/components/DataManagement";
 import { PageHeader } from "@/shared/presentation/components/MonthNav";
-
-export const dynamic = "force-dynamic";
+import { Query } from "@/shared/presentation/components/Query";
 
 export default function SettingsPage() {
-  const { filePath } = getContainer().kernel.database;
   return (
-    <>
-      <PageHeader title="Datos y backup" description="Tus datos viven sólo en este equipo (SQLite local)" />
-      <DataManagement databasePath={filePath} />
-    </>
+    <Query load={async (c) => c.kernel.database.location}>
+      {(location) => (
+        <>
+          <PageHeader title="Datos y backup" description="Tus datos viven sólo en este navegador (SQLite local)" />
+          <DataManagement location={location} />
+        </>
+      )}
+    </Query>
   );
 }

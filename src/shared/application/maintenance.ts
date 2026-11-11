@@ -22,11 +22,10 @@ export class RestoreBackupUseCase implements UseCase<{ json: string }, { rows: n
   }
 }
 
-export class SnapshotDatabaseUseCase implements UseCase<void, { path: string }> {
+export class ExportDatabaseFileUseCase implements UseCase<void, { bytes: Uint8Array }> {
   constructor(private readonly backup: IBackupService) {}
-  async execute() {
-    const r = await this.backup.snapshotDatabaseFile();
-    return r.ok ? ok({ path: r.value }) : r;
+  async execute(): Promise<Result<{ bytes: Uint8Array }, DomainError>> {
+    return ok({ bytes: await this.backup.exportDatabaseFile() });
   }
 }
 

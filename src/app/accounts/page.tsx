@@ -1,21 +1,25 @@
+"use client";
+
 import { AccountsBoard } from "@/modules/accounts/presentation/AccountsBoard";
-import { getContainer } from "@/shared/infrastructure/di/container";
-import { unwrapQuery } from "@/shared/presentation/action";
 import { PageHeader } from "@/shared/presentation/components/MonthNav";
+import { Query } from "@/shared/presentation/components/Query";
+import { unwrapQuery } from "@/shared/presentation/data";
 
-export const dynamic = "force-dynamic";
-
-export default async function AccountsPage() {
-  const c = getContainer();
-  const [accounts, rates, settings] = await Promise.all([
-    c.accounts.listAccounts.execute().then(unwrapQuery),
-    c.accounts.listExchangeRates.execute().then(unwrapQuery),
-    c.kernel.settings.get(),
-  ]);
+export default function AccountsPage() {
   return (
-    <>
-      <PageHeader title="Cuentas" description="Efectivo, bancos, billeteras, tarjetas e inversiones — multimoneda" />
-      <AccountsBoard accounts={accounts} rates={rates} baseCurrency={settings.baseCurrency.code} />
-    </>
+    <Query
+      load={async (c) => ({
+        accounts: unwrapQuery(await c.accounts.listAccounts.execute()),
+        rates: unwrapQuery(await c.accounts.listExchangeRates.execute()),
+        baseCurrency: (await c.kernel.settings.get()).baseCurrency.code,
+      })}
+    >
+      {({ accounts, rates, baseCurrency }) => (
+        <>
+          <PageHeader title="Cuentas" description="Efectivo, bancos, billeteras, tarjetas e inversiones — multimoneda" />
+          <AccountsBoard accounts={accounts} rates={rates} baseCurrency={baseCurrency} />
+        </>
+      )}
+    </Query>
   );
 }

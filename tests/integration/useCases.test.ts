@@ -1,3 +1,4 @@
+import initSqlJs from "sql.js";
 import { beforeEach, describe, expect, it } from "vitest";
 import { LocalDate, Results } from "@/shared/domain";
 import { buildContainer, type AppContainer } from "@/shared/infrastructure/di/container";
@@ -19,7 +20,7 @@ const envelope = async (month: string, categoryId: string) =>
   (await overview(month)).envelopes.find((e) => e.categoryId === categoryId)!;
 
 beforeEach(async () => {
-  c = buildContainer({ databasePath: ":memory:", clock: new FixedClock(LocalDate.fromISO("2026-11-11")) });
+  c = await buildContainer({ sqlJs: await initSqlJs(), clock: new FixedClock(LocalDate.fromISO("2026-11-11")) });
   bank = Results.unwrap(await c.accounts.createAccount.execute({ name: "Banco", type: "checking", currency: "ARS", openingBalance: "100000", aliases: ["debito"] })).id;
   cash = Results.unwrap(await c.accounts.createAccount.execute({ name: "Efectivo", type: "cash", currency: "ARS", openingBalance: "5000" })).id;
   card = Results.unwrap(await c.accounts.createAccount.execute({ name: "Visa", type: "credit_card", currency: "ARS", openingBalance: "0", creditLimit: "500000", closingDay: 24, aliases: ["visa"] })).id;

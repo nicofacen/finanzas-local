@@ -98,7 +98,6 @@ export function CommandBar() {
       });
       setText("");
       setPreview(null);
-      router.refresh();
     } else {
       setError(r.error);
     }

@@ -1,16 +1,29 @@
+"use client";
+
 import { DashboardView } from "@/modules/analytics/presentation/DashboardView";
-import { getContainer } from "@/shared/infrastructure/di/container";
-import { unwrapQuery } from "@/shared/presentation/action";
-import { resolveMonth } from "@/shared/presentation/month";
+import { unwrapQuery } from "@/shared/presentation/data";
+import { PageSuspense, Query } from "@/shared/presentation/components/Query";
+import { useMonth } from "@/shared/presentation/month";
 
-export const dynamic = "force-dynamic";
+function Dashboard() {
+  const month = useMonth().toString();
+  return (
+    <Query
+      deps={[month]}
+      load={async (c) => ({
+        data: unwrapQuery(await c.analytics.getDashboard.execute({ month })),
+        empty: unwrapQuery(await c.accounts.listAccounts.execute()).length === 0,
+      })}
+    >
+      {({ data, empty }) => <DashboardView data={data} empty={empty} />}
+    </Query>
+  );
+}
 
-export default async function DashboardPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
-  const month = resolveMonth((await searchParams).month);
-  const c = getContainer();
-  const [data, accounts] = await Promise.all([
-    c.analytics.getDashboard.execute({ month: month.toString() }).then(unwrapQuery),
-    c.accounts.listAccounts.execute().then(unwrapQuery),
-  ]);
-  return <DashboardView data={data} empty={accounts.length === 0} />;
+export default function DashboardPage() {
+  return (
+    <PageSuspense>
+      <Dashboard />
+    </PageSuspense>
+  );
 }

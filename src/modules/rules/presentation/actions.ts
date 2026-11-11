@@ -1,10 +1,7 @@
-"use server";
-
 import { z } from "zod";
 import { CONDITION_FIELDS, CONDITION_OPERATORS } from "../domain/RuleSpecifications";
 import { Currency, Money } from "@/shared/domain";
 import { parseLocalizedAmount } from "@/modules/transactions/domain/LocalizedAmount";
-import { getContainer } from "@/shared/infrastructure/di/container";
 import { runAction, zId } from "@/shared/presentation/action";
 
 const conditionSchema = z.object({
@@ -22,23 +19,23 @@ export async function createRuleAction(input: unknown) {
     renameTo: z.string().trim().max(100).optional().nullable(),
     priority: z.coerce.number().int().min(0).max(10_000).optional(),
   });
-  return runAction(schema, input, (dto) =>
-    getContainer().rules.createRule.execute({
+  return runAction(schema, input, (dto, c) =>
+    c.rules.createRule.execute({
       ...dto,
       // Las condiciones de monto se normalizan a decimal canónico ("5.000" → "5000").
-      conditions: dto.conditions.map((c) =>
-        c.field === "amount" ? { ...c, value: parseLocalizedAmount(c.value)?.replace("-", "") ?? c.value } : c,
+      conditions: dto.conditions.map((cond) =>
+        cond.field === "amount" ? { ...cond, value: parseLocalizedAmount(cond.value)?.replace("-", "") ?? cond.value } : cond,
       ),
     }),
   );
 }
 
 export async function toggleRuleAction(input: unknown) {
-  return runAction(z.object({ id: zId, active: z.boolean() }), input, (dto) => getContainer().rules.toggleRule.execute(dto));
+  return runAction(z.object({ id: zId, active: z.boolean() }), input, (dto, c) => c.rules.toggleRule.execute(dto));
 }
 
 export async function deleteRuleAction(input: unknown) {
-  return runAction(z.object({ id: zId }), input, (dto) => getContainer().rules.deleteRule.execute(dto));
+  return runAction(z.object({ id: zId }), input, (dto, c) => c.rules.deleteRule.execute(dto));
 }
 
 export async function testRulesAction(input: unknown) {
@@ -46,10 +43,10 @@ export async function testRulesAction(input: unknown) {
   return runAction(
     schema,
     input,
-    async ({ description, amount }) => {
+    async ({ description, amount }, c) => {
       const parsed = Money.fromDecimal(parseLocalizedAmount(amount) ?? "0", Currency.ARS);
       const minor = parsed.ok ? parsed.value.abs().minor : 0n;
-      return getContainer().rules.testRules.execute({ description, amountMinor: minor });
+      return c.rules.testRules.execute({ description, amountMinor: minor });
     },
     { revalidate: false },
   );

@@ -1,8 +1,5 @@
-"use server";
-
 import { z } from "zod";
 import { ACCOUNT_TYPES } from "../domain/AccountType";
-import { getContainer } from "@/shared/infrastructure/di/container";
 import { runAction, zDate } from "@/shared/presentation/action";
 
 const createAccountSchema = z.object({
@@ -19,7 +16,7 @@ const createAccountSchema = z.object({
 });
 
 export async function createAccountAction(input: unknown) {
-  return runAction(createAccountSchema, input, (dto) => getContainer().accounts.createAccount.execute(dto));
+  return runAction(createAccountSchema, input, (dto, c) => c.accounts.createAccount.execute(dto));
 }
 
 const rateSchema = z.object({
@@ -29,5 +26,5 @@ const rateSchema = z.object({
 });
 
 export async function setExchangeRateAction(input: unknown) {
-  return runAction(rateSchema, input, (dto) => getContainer().accounts.setExchangeRate.execute(dto));
+  return runAction(rateSchema, input, (dto, c) => c.accounts.setExchangeRate.execute(dto));
 }

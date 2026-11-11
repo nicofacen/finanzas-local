@@ -7,15 +7,14 @@ las dependencias apuntan **siempre hacia el dominio**.
 
 ```
 ├── drizzle/                         Migraciones SQL generadas (drizzle-kit)
-├── data/                            finanzas.db (SQLite local, ignorado por git) + backups/
-├── scripts/seed.ts                  npm run db:seed / db:reset
-├── tests/integration/               Casos de uso contra SQLite en memoria
+├── scripts/                         embed-migrations.ts (SQL → TS), copy-sqljs.ts (WASM → public/)
+├── .github/workflows/pages.yml      Tests + build estático + publicación en GitHub Pages
+├── tests/integration/               Casos de uso contra SQLite en memoria (sql.js)
 └── src/
     ├── app/                         Next.js App Router (rutas finas: sólo componen vistas)
     │   ├── page.tsx                 Dashboard
     │   ├── budget/ transactions/ installments/ subscriptions/
     │   ├── accounts/ rules/ import/ settings/
-    │   └── api/backup/route.ts      Descarga de backup JSON
     ├── components/ui/               Primitivas estilo shadcn/ui (Button, Card, Dialog, Table…)
     ├── shared/
     │   ├── domain/                  Núcleo compartido — TypeScript puro
@@ -27,8 +26,8 @@ las dependencias apuntan **siempre hacia el dominio**.
     │   │   └── ports/               IUnitOfWork, IIdGenerator, IClock, ISettings*
     │   ├── application/             UseCase<I,O>, MoneyView, backup/reset use cases
     │   ├── infrastructure/
-    │   │   ├── persistence/         schema.ts (Drizzle), database.ts, SqliteUnitOfWork, mappers
-    │   │   ├── backup/              SqliteBackupService (JSON + copia .db)
+    │   │   ├── persistence/         schema.ts (Drizzle), database.ts (sql.js + migraciones), SqliteUnitOfWork, mappers
+    │   │   ├── backup/              SqliteBackupService (JSON + archivo .sqlite)
     │   │   ├── seed/                SeedDemoDataUseCase (usa los casos de uso reales)
     │   │   └── di/container.ts      ★ COMPOSITION ROOT
     │   └── presentation/            runAction (Zod → caso de uso → ActionResult), CommandBar Ctrl+K, layout
@@ -50,7 +49,7 @@ las dependencias apuntan **siempre hacia el dominio**.
 ```
 
 Cada módulo además tiene `infrastructure/<modulo>.module.ts` (fábrica) y
-`presentation/` (Server Actions con Zod + componentes React).
+`presentation/` (acciones con Zod que corren en el navegador + componentes React).
 
 ## Cómo se conectan los módulos
 
@@ -69,19 +68,24 @@ define un **puerto** y el proveedor lo implementa. Sólo el composition root con
 
 `src/shared/infrastructure/di/container.ts`:
 
-1. Abre SQLite y aplica migraciones → arma el `SharedKernel` (UoW, IdGenerator, Clock, Settings).
+1. `buildContainer({ sqlJs, storage?, clock? })` recibe el motor SQLite/WASM ya inicializado, carga la base
+   guardada, aplica migraciones pendientes (`user_version`) y arma el `SharedKernel` (UoW, IdGenerator, Clock, Settings).
 2. Ensambla en orden: `accounts` → puertos de `budgets` → `rules` → `transactions` → casos de uso de `budgets` → `analytics`.
-3. `getContainer()` devuelve un singleton por proceso (sobrevive al hot-reload).
-4. `buildContainer({ databasePath: ":memory:", clock })` se usa en los tests.
+3. `di/browser.ts` → `getContainer()`: singleton por pestaña; carga `sql-wasm` desde `public/sqljs` y
+   persiste la base en **IndexedDB** tras cada escritura.
+4. Tests: `buildContainer({ sqlJs: await initSqlJs(), clock })` con la base en memoria.
 
-Flujo de una petición: **Server Action** (valida con Zod) → `getContainer().<modulo>.<casoDeUso>.execute()`
-→ `IUnitOfWork.transaction()` → entidades de dominio → repositorios → `Result` → `ActionResult` serializable.
+Flujo de una acción: formulario → `runAction` (valida con Zod, **en cola de a una**) →
+`container.<modulo>.<casoDeUso>.execute()` → `IUnitOfWork.transaction()` → entidades de dominio → repositorios →
+`Result` → persistencia en IndexedDB → `invalidateAll()` (las pantallas se recargan con `useQuery`).
 
 ## Decisiones clave
 
 - **Dinero**: `Money` usa `bigint` en unidades menores; SQLite guarda `INTEGER`. Los `number` sólo existen para graficar.
-- **Unit of Work**: `BEGIN IMMEDIATE/COMMIT/ROLLBACK` + mutex + `AsyncLocalStorage` (UoW anidadas se unen a la externa).
+- **Unit of Work**: `BEGIN/COMMIT/ROLLBACK`; una UoW invocada dentro de otra se une a la externa. Como no hay
+  `AsyncLocalStorage` en el navegador, `runAction` serializa las acciones del usuario para que ese anidamiento sea siempre real.
   Un `Err` o una excepción revierte todo (saldo, transacción, sobres, cuotas).
+- **Local-first en el navegador**: sin servidor; la base SQLite vive en IndexedDB de cada dispositivo (sin sincronización).
 - **Cuotas**: la tarjeta registra la deuda total al comprar; el presupuesto recibe cada cuota en *su* mes.
   La 1ª cuota respeta el día de cierre de la tarjeta.
 - **Multimoneda**: cada transacción guarda su monto en la moneda de la cuenta y en moneda base (al TC del momento).

@@ -1,9 +1,8 @@
-import { randomUUID } from "node:crypto";
 import { LocalDate, type IClock, type IIdGenerator } from "@/shared/domain";
 
 export class UuidGenerator implements IIdGenerator {
   next(): string {
-    return randomUUID();
+    return globalThis.crypto.randomUUID(); // disponible en navegadores modernos y Node ≥ 19
   }
 }
 

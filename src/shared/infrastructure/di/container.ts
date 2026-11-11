@@ -1,3 +1,4 @@
+import type { SqlJsStatic } from "sql.js";
 import { createAccountsModule } from "@/modules/accounts/infrastructure/accounts.module";
 import { createAnalyticsModule } from "@/modules/analytics/infrastructure/analytics.module";
 import type { IExpenseRecorder } from "@/modules/budgets/application/ports";
@@ -6,13 +7,13 @@ import { createRulesModule } from "@/modules/rules/infrastructure/rules.module";
 import { createTransactionsModule } from "@/modules/transactions/infrastructure/transactions.module";
 import {
   ExportBackupUseCase,
+  ExportDatabaseFileUseCase,
   ResetDataUseCase,
   RestoreBackupUseCase,
-  SnapshotDatabaseUseCase,
 } from "@/shared/application/maintenance";
 import type { IClock } from "@/shared/domain";
 import { SqliteBackupService } from "../backup/SqliteBackupService";
-import { openDatabase } from "../persistence/database";
+import { openDatabase, type IDatabaseStorage } from "../persistence/database";
 import { DrizzleSettingsStore } from "../persistence/DrizzleSettingsStore";
 import { SqliteUnitOfWork } from "../persistence/SqliteUnitOfWork";
 import { SeedDemoDataUseCase } from "../seed/SeedDemoDataUseCase";
@@ -20,8 +21,12 @@ import { SystemClock, UuidGenerator } from "../system";
 import type { SharedKernel } from "./SharedKernel";
 
 export interface ContainerOptions {
-  databasePath?: string;
+  /** Motor SQLite (WASM) ya inicializado: lo provee el navegador o Node (tests/seed). */
+  sqlJs: SqlJsStatic;
+  /** Dónde se guarda la base entre sesiones (IndexedDB). Sin él, vive sólo en memoria. */
+  storage?: IDatabaseStorage;
   clock?: IClock;
+  location?: string;
 }
 
 /**
@@ -33,11 +38,11 @@ export interface ContainerOptions {
  *                 ▲            │  ▲             │
  *                 └ suggester ─┘  └── ledger ◄──┘ (IBudgetLedgerPort)
  */
-export function buildContainer(options: ContainerOptions = {}) {
-  const database = openDatabase(options.databasePath);
+export async function buildContainer(options: ContainerOptions) {
+  const database = await openDatabase(options.sqlJs, { storage: options.storage, location: options.location });
   const kernel: SharedKernel = {
     database,
-    uow: new SqliteUnitOfWork(database.sqlite),
+    uow: new SqliteUnitOfWork(database.raw),
     ids: new UuidGenerator(),
     clock: options.clock ?? new SystemClock(),
     settings: new DrizzleSettingsStore(database.db),
@@ -78,7 +83,7 @@ export function buildContainer(options: ContainerOptions = {}) {
     conversion: accounts.ports.conversion,
   });
 
-  const backup = new SqliteBackupService(database.sqlite, database.filePath);
+  const backup = new SqliteBackupService(database.raw, database.exportFile);
   const writeSide = {
     accounts: accounts.useCases,
     transactions: transactions.useCases,
@@ -91,22 +96,16 @@ export function buildContainer(options: ContainerOptions = {}) {
     ...writeSide,
     csvAdapters: transactions.ports.csvAdapters,
     analytics: analytics.useCases,
+    /** Guarda la base en el almacenamiento persistente (llamar tras cada escritura). */
+    persist: () => database.persist(),
     system: {
       exportBackup: new ExportBackupUseCase(backup),
+      exportDatabaseFile: new ExportDatabaseFileUseCase(backup),
       restoreBackup: new RestoreBackupUseCase(backup),
-      snapshotDatabase: new SnapshotDatabaseUseCase(backup),
       resetData: new ResetDataUseCase(backup),
       seedDemoData: new SeedDemoDataUseCase(writeSide, kernel, backup),
     },
   };
 }
 
-export type AppContainer = ReturnType<typeof buildContainer>;
-
-const globalForContainer = globalThis as unknown as { __finanzasContainer?: AppContainer };
-
-/** Singleton por proceso (sobrevive al hot-reload de Next.js en desarrollo). */
-export function getContainer(): AppContainer {
-  if (!globalForContainer.__finanzasContainer) globalForContainer.__finanzasContainer = buildContainer();
-  return globalForContainer.__finanzasContainer;
-}
+export type AppContainer = Awaited<ReturnType<typeof buildContainer>>;

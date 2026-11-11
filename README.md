@@ -1,15 +1,14 @@
 # Finanzas Local-First
 
-Gestión y planificación de gastos mensuales, 100% local (SQLite), inspirada en
-Actual Budget, YNAB, Monarch Money y Firefly III. Ver [ARCHITECTURE.md](ARCHITECTURE.md).
+Gestión y planificación de gastos mensuales que corre **100% en tu navegador**
+(SQLite/WASM guardado en IndexedDB), inspirada en Actual Budget, YNAB, Monarch Money
+y Firefly III. No hay servidor ni cuentas: tus datos no salen de tu dispositivo.
+Ver [ARCHITECTURE.md](ARCHITECTURE.md).
 
-## Requisitos
-Node.js 20+ (probado con Node 26).
-
-## Uso
+## Uso local
+Requiere Node.js 20+.
 ```bash
 npm install
-npm run db:seed      # opcional: 4 meses de datos de demostración
 npm run dev          # http://localhost:3000
 ```
 
@@ -17,11 +16,18 @@ npm run dev          # http://localhost:3000
 |---|---|
 | `npm test` | Tests unitarios (dominio) + integración (casos de uso con SQLite en memoria) |
 | `npm run lint` | Chequeo de tipos |
-| `npm run build && npm start` | Build de producción |
-| `npm run db:generate` | Genera una migración tras cambiar `schema.ts` |
-| `npm run db:reset` | Deja la base vacía |
+| `npm run build` | Exportación estática en `out/` |
+| `npm run db:generate` | Genera una migración tras cambiar `schema.ts` (y la embebe) |
 
-La base vive en `data/finanzas.db` (configurable con `FINANZAS_DB_PATH`).
+## Publicar en GitHub Pages
+1. Subí el código a GitHub (rama `main`).
+2. En el repositorio: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+3. Cada `git push` a `main` ejecuta `.github/workflows/pages.yml` (tests + build + publicación).
+4. La URL queda en `https://<usuario>.github.io/<repositorio>/`.
+
+## Tus datos
+Viven en el navegador (IndexedDB) de cada dispositivo: no se sincronizan y se pierden si se
+borran los datos del sitio. Usá **Datos y backup** para descargar un backup JSON o el archivo `.sqlite`.
 
 ## Carga rápida (Ctrl+K / Cmd+K)
 - `15000 Supermercado Débito` → gasto en la cuenta con alias “débito”
