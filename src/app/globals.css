@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: oklch(0.985 0.002 250);
+  --foreground: oklch(0.2 0.02 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0.02 260);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.5 0.02 260);
+  --border: oklch(0.91 0.008 250);
+  --input: oklch(0.89 0.01 250);
+  --primary: oklch(0.52 0.15 160);
+  --primary-foreground: oklch(0.99 0 0);
+  --accent: oklch(0.95 0.02 160);
+  --accent-foreground: oklch(0.3 0.08 160);
+  --positive: oklch(0.55 0.15 155);
+  --negative: oklch(0.58 0.2 20);
+  --warning: oklch(0.7 0.15 70);
+  --ring: oklch(0.6 0.13 160);
+  --chart-1: oklch(0.55 0.15 160);
+  --chart-2: oklch(0.6 0.17 250);
+  --chart-3: oklch(0.7 0.15 70);
+  --chart-4: oklch(0.6 0.2 20);
+  --chart-5: oklch(0.6 0.15 300);
+  --radius: 0.75rem;
+  /* Paleta categórica validada (dataviz): slot 1 azul, slot 2 naranja. */
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-ref: #8a8984;
+}
+
+.dark {
+  --background: oklch(0.16 0.012 260);
+  --foreground: oklch(0.95 0.005 250);
+  --card: oklch(0.2 0.014 260);
+  --card-foreground: oklch(0.95 0.005 250);
+  --muted: oklch(0.25 0.014 260);
+  --muted-foreground: oklch(0.7 0.015 260);
+  --border: oklch(0.3 0.015 260);
+  --input: oklch(0.34 0.015 260);
+  --primary: oklch(0.7 0.15 160);
+  --primary-foreground: oklch(0.15 0.02 160);
+  --accent: oklch(0.28 0.04 160);
+  --accent-foreground: oklch(0.9 0.06 160);
+  --positive: oklch(0.75 0.15 155);
+  --negative: oklch(0.72 0.17 20);
+  --warning: oklch(0.8 0.14 75);
+  --ring: oklch(0.7 0.13 160);
+  --chart-1: oklch(0.72 0.15 160);
+  --chart-2: oklch(0.72 0.14 250);
+  --chart-3: oklch(0.8 0.14 75);
+  --chart-4: oklch(0.72 0.17 20);
+  --chart-5: oklch(0.72 0.14 300);
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-ref: #8f8e88;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-warning: var(--warning);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
