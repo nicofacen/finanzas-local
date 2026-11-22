@@ -1,8 +1,8 @@
 "use client";
 
-import { BudgetBoard } from "@frontend/modules/budgets/BudgetBoard";
-import { MonthNav, PageHeader } from "@frontend/shared/components/MonthNav";
-import { PageSuspense, Query } from "@frontend/shared/components/Query";
+import { BudgetBoard } from "@frontend/modules/BudgetBoard";
+import { MonthNav, PageHeader } from "@frontend/components/MonthNav";
+import { PageSuspense, Query } from "@frontend/components/Query";
 import { unwrapQuery } from "@frontend/shared/data";
 import { useMonth } from "@frontend/shared/month";
 

@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { buttonVariants } from "@frontend/components/ui/button";
-import { cn } from "@frontend/components/ui/cn";
-import { Card, CardContent, CardHeader, CardTitle } from "@frontend/components/ui/primitives";
-import { TransactionForm } from "@frontend/modules/transactions/TransactionForm";
-import { TransactionTable } from "@frontend/modules/transactions/TransactionTable";
-import { MoneyText } from "@frontend/shared/components/Money";
-import { MonthNav, PageHeader } from "@frontend/shared/components/MonthNav";
-import { PageSuspense, Query } from "@frontend/shared/components/Query";
+import { buttonVariants } from "@frontend/components/button";
+import { cn } from "@frontend/components/cn";
+import { Card, CardContent, CardHeader, CardTitle } from "@frontend/components/primitives";
+import { TransactionForm } from "@frontend/modules/TransactionForm";
+import { TransactionTable } from "@frontend/modules/TransactionTable";
+import { MoneyText } from "@frontend/components/Money";
+import { MonthNav, PageHeader } from "@frontend/components/MonthNav";
+import { PageSuspense, Query } from "@frontend/components/Query";
 import { unwrapQuery } from "@frontend/shared/data";
 import { todayISO, useMonth } from "@frontend/shared/month";
 

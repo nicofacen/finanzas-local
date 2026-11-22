@@ -3,6 +3,6 @@
   "compilerOptions": {
     "plugins": [{ "name": "next" }]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../backend/src/**/*.ts"],
-  "exclude": ["node_modules", ".next", "out", "../backend/**/*.test.ts"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../backend/**/*.ts"],
+  "exclude": ["node_modules", ".next", "out", "../backend/**/*.test.ts", "../backend/tests", "../backend/drizzle.config.ts"]
 }

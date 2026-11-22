@@ -2,12 +2,12 @@
 
 import { FlaskConical, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@frontend/components/ui/button";
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, EmptyState, Field, Input, Select } from "@frontend/components/ui/primitives";
+import { Button } from "@frontend/components/button";
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, EmptyState, Field, Input, Select } from "@frontend/components/primitives";
 import type { RuleView } from "@backend/modules/rules/application/useCases";
 import type { ConditionField, ConditionOperator } from "@backend/modules/rules/domain/RuleSpecifications";
 import { formToObject, useAction } from "@frontend/shared/useAction";
-import { createRuleAction, deleteRuleAction, testRulesAction, toggleRuleAction } from "./actions";
+import { createRuleAction, deleteRuleAction, testRulesAction, toggleRuleAction } from "./rulesActions";
 
 const OPERATORS: Record<ConditionField, [ConditionOperator, string][]> = {
   description: [["contains", "contiene"], ["starts_with", "empieza con"], ["equals", "es igual a"], ["regex", "regex"]],

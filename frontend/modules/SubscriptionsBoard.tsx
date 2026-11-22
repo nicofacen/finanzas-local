@@ -1,13 +1,13 @@
 "use client";
 
 import { CheckCircle2, Circle, Clock, Plus } from "lucide-react";
-import { Button } from "@frontend/components/ui/button";
-import { cn } from "@frontend/components/ui/cn";
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Field, Input, Select } from "@frontend/components/ui/primitives";
+import { Button } from "@frontend/components/button";
+import { cn } from "@frontend/components/cn";
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Field, Input, Select } from "@frontend/components/primitives";
 import type { SubscriptionCalendar } from "@backend/modules/budgets/application/useCases";
-import { MoneyText } from "@frontend/shared/components/Money";
+import { MoneyText } from "@frontend/components/Money";
 import { formToObject, useAction } from "@frontend/shared/useAction";
-import { createSubscriptionAction, paySubscriptionAction } from "./actions";
+import { createSubscriptionAction, paySubscriptionAction } from "./budgetsActions";
 
 const STATUS = {
   paid: { label: "Pagado", tone: "positive", icon: CheckCircle2 },

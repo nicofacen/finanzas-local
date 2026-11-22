@@ -6,29 +6,30 @@ import { describe, expect, it } from "vitest";
  * Guardián de arquitectura: falla si alguien cruza una frontera de capas.
  *
  *   frontend/            →  puede usar backend (application, domain, di/)   ✔
- *   backend/src          →  NUNCA importa frontend, React ni Next           ✘
+ *   backend/             →  NUNCA importa frontend, React ni Next           ✘
  *   backend/**\/domain    →  puro: sólo importa otros domain                 ✘ librerías, application, infrastructure
  *   backend/**\/application → no importa infrastructure ni frontend         ✘
- *
- * Las rutas "lógicas" quitan el prefijo src: backend/src/modules/x → backend/modules/x
  */
 
 const ROOT = process.cwd();
 const FRONTEND = path.join(ROOT, "frontend");
-const BACKEND = path.join(ROOT, "backend", "src");
+const BACKEND = path.join(ROOT, "backend");
+
+// Carpetas que no son código de producción: dependencias, compilados, tests y migraciones SQL.
+const IGNORED_DIRS = new Set(["node_modules", ".next", "out", "tests", "migrations", "public"]);
 
 function listFiles(dir: string): string[] {
   return fs.readdirSync(dir).flatMap((name) => {
     const full = path.join(dir, name);
-    if (fs.statSync(full).isDirectory()) return name === "node_modules" || name === ".next" || name === "out" ? [] : listFiles(full);
-    // Los tests (que importan vitest) y el código generado no cuentan como código de producción.
-    return /\.(ts|tsx)$/.test(name) && !/\.(test|generated)\.ts$/.test(name) && name !== "next-env.d.ts" ? [full] : [];
+    if (fs.statSync(full).isDirectory()) return IGNORED_DIRS.has(name) ? [] : listFiles(full);
+    // Los tests (que importan vitest), el código generado y las configuraciones no cuentan.
+    return /\.(ts|tsx)$/.test(name) && !/\.(test|generated|config)\.ts$/.test(name) && name !== "next-env.d.ts" ? [full] : [];
   });
 }
 
-/** Ruta lógica de un archivo: relativa a la raíz y sin el "src" del backend. */
+/** Ruta lógica de un archivo: relativa a la raíz del proyecto. */
 function logical(absPath: string): string {
-  return path.relative(ROOT, absPath).split(path.sep).join("/").replace(/^backend\/src\//, "backend/");
+  return path.relative(ROOT, absPath).split(path.sep).join("/");
 }
 
 /** Especificadores de import de un archivo (import/export ... from "x", import("x")). */

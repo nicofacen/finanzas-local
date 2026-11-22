@@ -2,12 +2,12 @@
 
 import { FileUp, Upload } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@frontend/components/ui/button";
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Field, Select, Table, Td, Th, Tr } from "@frontend/components/ui/primitives";
+import { Button } from "@frontend/components/button";
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Field, Select, Table, Td, Th, Tr } from "@frontend/components/primitives";
 import type { PreviewLine } from "@backend/modules/transactions/application/ImportBankStatementUseCases";
-import { MoneyText } from "@frontend/shared/components/Money";
+import { MoneyText } from "@frontend/components/Money";
 import { useAction } from "@frontend/shared/useAction";
-import { importStatementAction, previewStatementAction } from "./actions";
+import { importStatementAction, previewStatementAction } from "./transactionsActions";
 
 export function ImportWizard({
   accounts,

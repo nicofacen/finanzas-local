@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { useQuery } from "../data";
+import { useQuery } from "@frontend/shared/data";
 import type { AppContainer } from "@backend/shared/infrastructure/di/container";
 
 export function Loading() {

@@ -1,8 +1,8 @@
 "use client";
 
-import { SubscriptionsBoard } from "@frontend/modules/budgets/SubscriptionsBoard";
-import { MonthNav, PageHeader } from "@frontend/shared/components/MonthNav";
-import { PageSuspense, Query } from "@frontend/shared/components/Query";
+import { SubscriptionsBoard } from "@frontend/modules/SubscriptionsBoard";
+import { MonthNav, PageHeader } from "@frontend/components/MonthNav";
+import { PageSuspense, Query } from "@frontend/components/Query";
 import { unwrapQuery } from "@frontend/shared/data";
 import { todayISO, useMonth } from "@frontend/shared/month";
 

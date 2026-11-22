@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
-import { CommandBar, CommandBarTrigger } from "@frontend/shared/components/CommandBar";
-import { Sidebar } from "@frontend/shared/components/Sidebar";
-import { THEME_SCRIPT, ThemeToggle } from "@frontend/shared/components/ThemeToggle";
+import { CommandBar, CommandBarTrigger } from "@frontend/components/CommandBar";
+import { Sidebar } from "@frontend/components/Sidebar";
+import { THEME_SCRIPT, ThemeToggle } from "@frontend/components/ThemeToggle";
 import "./globals.css";
 
 export const metadata: Metadata = {

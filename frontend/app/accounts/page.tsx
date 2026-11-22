@@ -1,8 +1,8 @@
 "use client";
 
-import { AccountsBoard } from "@frontend/modules/accounts/AccountsBoard";
-import { PageHeader } from "@frontend/shared/components/MonthNav";
-import { Query } from "@frontend/shared/components/Query";
+import { AccountsBoard } from "@frontend/modules/AccountsBoard";
+import { PageHeader } from "@frontend/components/MonthNav";
+import { Query } from "@frontend/components/Query";
 import { unwrapQuery } from "@frontend/shared/data";
 
 export default function AccountsPage() {

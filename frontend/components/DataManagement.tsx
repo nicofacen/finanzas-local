@@ -2,16 +2,16 @@
 
 import { Database, Download, HardDriveDownload, RotateCcw, Sparkles, Upload } from "lucide-react";
 import { useRef } from "react";
-import { Button } from "@frontend/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from "@frontend/components/ui/primitives";
+import { Button } from "@frontend/components/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from "@frontend/components/primitives";
 import {
   exportBackupAction,
   exportDatabaseFileAction,
   resetDataAction,
   restoreBackupAction,
   seedDemoAction,
-} from "../systemActions";
-import { useAction } from "../useAction";
+} from "@frontend/shared/systemActions";
+import { useAction } from "@frontend/shared/useAction";
 
 function download(content: BlobPart, filename: string, type: string) {
   const url = URL.createObjectURL(new Blob([content], { type }));

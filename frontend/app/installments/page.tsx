@@ -1,10 +1,10 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, EmptyState, Progress, Table, Td, Th, Tr } from "@frontend/components/ui/primitives";
-import { ProjectionBars } from "@frontend/modules/analytics/components/Charts";
-import { MoneyText } from "@frontend/shared/components/Money";
-import { PageHeader } from "@frontend/shared/components/MonthNav";
-import { Query } from "@frontend/shared/components/Query";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, EmptyState, Progress, Table, Td, Th, Tr } from "@frontend/components/primitives";
+import { ProjectionBars } from "@frontend/modules/Charts";
+import { MoneyText } from "@frontend/components/Money";
+import { PageHeader } from "@frontend/components/MonthNav";
+import { Query } from "@frontend/components/Query";
 import { unwrapQuery } from "@frontend/shared/data";
 
 export default function InstallmentsPage() {

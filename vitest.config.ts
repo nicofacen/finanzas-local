@@ -6,13 +6,13 @@ const at = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 export default defineConfig({
   resolve: {
     alias: {
-      "@backend": at("./backend/src"),
+      "@backend": at("./backend"),
       "@frontend": at("./frontend"),
     },
   },
   test: {
-    // Unitarios junto al código (backend/src/**), integración en backend/tests y arquitectura en tests/.
-    include: ["backend/**/*.test.ts", "tests/**/*.test.ts"],
+    // Unitarios junto al código; integración y arquitectura en backend/tests.
+    include: ["backend/**/*.test.ts"],
     environment: "node",
   },
 });

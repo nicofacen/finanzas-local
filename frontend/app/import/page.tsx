@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ImportWizard } from "@frontend/modules/transactions/ImportWizard";
-import { PageHeader } from "@frontend/shared/components/MonthNav";
-import { Query } from "@frontend/shared/components/Query";
+import { ImportWizard } from "@frontend/modules/ImportWizard";
+import { PageHeader } from "@frontend/components/MonthNav";
+import { Query } from "@frontend/components/Query";
 import { unwrapQuery } from "@frontend/shared/data";
 
 export default function ImportPage() {
