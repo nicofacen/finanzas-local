@@ -3,7 +3,15 @@
 Gestión y planificación de gastos mensuales que corre **100% en tu navegador**
 (SQLite/WASM guardado en IndexedDB), inspirada en Actual Budget, YNAB, Monarch Money
 y Firefly III. No hay servidor ni cuentas: tus datos no salen de tu dispositivo.
-Ver [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Estructura
+```
+frontend/   La interfaz (Next.js): páginas, componentes, estilos
+backend/    La lógica y los datos: dominio, casos de uso, base de datos, migraciones
+docs/       Documentación — ver docs/ARCHITECTURE.md
+tests/      Pruebas de arquitectura (que el frontend y el backend no se mezclen)
+scripts/    Herramientas de construcción
+```
 
 ## Uso local
 Requiere Node.js 20+.
@@ -14,9 +22,10 @@ npm run dev          # http://localhost:3000
 
 | Comando | Qué hace |
 |---|---|
-| `npm test` | Tests unitarios (dominio) + integración (casos de uso con SQLite en memoria) |
+| `npm run dev` | Servidor de desarrollo del frontend |
+| `npm run build` | Genera el sitio estático en `frontend/out/` |
+| `npm test` | Unitarios (dominio), integración (casos de uso) y arquitectura (fronteras frontend/backend) |
 | `npm run lint` | Chequeo de tipos |
-| `npm run build` | Exportación estática en `out/` |
 | `npm run db:generate` | Genera una migración tras cambiar `schema.ts` (y la embebe) |
 
 ## Publicar en GitHub Pages
