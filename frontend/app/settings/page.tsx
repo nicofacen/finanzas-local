@@ -1,8 +1,8 @@
 "use client";
 
-import { DataManagement } from "@frontend/shared/components/DataManagement";
-import { PageHeader } from "@frontend/shared/components/MonthNav";
-import { Query } from "@frontend/shared/components/Query";
+import { DataManagement } from "@frontend/components/DataManagement";
+import { PageHeader } from "@frontend/components/MonthNav";
+import { Query } from "@frontend/components/Query";
 
 export default function SettingsPage() {
   return (

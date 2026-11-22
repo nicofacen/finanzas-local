@@ -2,8 +2,8 @@
 
 import { AlertTriangle, Plus } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@frontend/components/ui/button";
-import { cn } from "@frontend/components/ui/cn";
+import { Button } from "@frontend/components/button";
+import { cn } from "@frontend/components/cn";
 import {
   Badge,
   Card,
@@ -19,10 +19,10 @@ import {
   Td,
   Th,
   Tr,
-} from "@frontend/components/ui/primitives";
+} from "@frontend/components/primitives";
 import type { BudgetOverview, BudgetSummaryView, EnvelopeView } from "@backend/modules/budgets/application/GetBudgetOverviewUseCase";
 import type { SavingsGoalView } from "@backend/modules/budgets/application/useCases";
-import { MoneyText } from "@frontend/shared/components/Money";
+import { MoneyText } from "@frontend/components/Money";
 import { formToObject, useAction } from "@frontend/shared/useAction";
 import {
   assignToEnvelopeAction,
@@ -30,7 +30,7 @@ import {
   createCategoryAction,
   createSavingsGoalAction,
   setMethodologyAction,
-} from "./actions";
+} from "./budgetsActions";
 
 type View = "zero-based" | "safe-to-spend" | "combined";
 

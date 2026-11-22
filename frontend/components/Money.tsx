@@ -1,4 +1,4 @@
-import { cn } from "@frontend/components/ui/cn";
+import { cn } from "@frontend/components/cn";
 import type { MoneyView } from "@backend/shared/application/views";
 
 /** Muestra un MoneyView ya formateado por el dominio, coloreado por signo si se pide. */

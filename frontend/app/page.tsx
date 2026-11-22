@@ -1,8 +1,8 @@
 "use client";
 
-import { DashboardView } from "@frontend/modules/analytics/DashboardView";
+import { DashboardView } from "@frontend/modules/DashboardView";
 import { unwrapQuery } from "@frontend/shared/data";
-import { PageSuspense, Query } from "@frontend/shared/components/Query";
+import { PageSuspense, Query } from "@frontend/components/Query";
 import { useMonth } from "@frontend/shared/month";
 
 function Dashboard() {

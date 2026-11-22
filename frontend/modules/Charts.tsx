@@ -13,7 +13,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { compactCurrency, fullCurrency } from "@frontend/shared/components/Money";
+import { compactCurrency, fullCurrency } from "@frontend/components/Money";
 
 const axis = { stroke: "var(--muted-foreground)", fontSize: 11, tickLine: false, axisLine: false } as const;
 const grid = <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />;

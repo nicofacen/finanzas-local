@@ -18,16 +18,9 @@
     "types": ["node"],
     "paths": {
       "@frontend/*": ["./frontend/*"],
-      "@backend/*": ["./backend/src/*"]
+      "@backend/*": ["./backend/*"]
     }
   },
-  "include": [
-    "frontend/**/*.ts",
-    "frontend/**/*.tsx",
-    "backend/**/*.ts",
-    "tests/**/*.ts",
-    "scripts/**/*.ts",
-    "*.ts"
-  ],
+  "include": ["frontend/**/*.ts", "frontend/**/*.tsx", "backend/**/*.ts", "*.ts"],
   "exclude": ["node_modules", "frontend/.next", "frontend/out"]
 }

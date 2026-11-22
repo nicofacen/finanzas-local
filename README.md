@@ -7,11 +7,9 @@ y Firefly III. No hay servidor ni cuentas: tus datos no salen de tu dispositivo.
 ## Estructura
 ```
 frontend/   La interfaz (Next.js): páginas, componentes, estilos
-backend/    La lógica y los datos: dominio, casos de uso, base de datos, migraciones
-docs/       Documentación — ver docs/ARCHITECTURE.md
-tests/      Pruebas de arquitectura (que el frontend y el backend no se mezclen)
-scripts/    Herramientas de construcción
+backend/    La lógica y los datos: dominio, casos de uso, base de datos, migraciones y sus tests
 ```
+Detalle de cada carpeta y reglas de arquitectura: [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Uso local
 Requiere Node.js 20+.

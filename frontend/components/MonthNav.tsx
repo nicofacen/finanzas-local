@@ -1,8 +1,8 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { YearMonth } from "@backend/shared/domain";
-import { buttonVariants } from "@frontend/components/ui/button";
-import { cn } from "@frontend/components/ui/cn";
+import { buttonVariants } from "@frontend/components/button";
+import { cn } from "@frontend/components/cn";
 
 /** Navegación entre meses vía ?month=AAAA-MM (Server Component). */
 export function MonthNav({ month, basePath, extra = {} }: { month: string; basePath: string; extra?: Record<string, string> }) {

@@ -1,12 +1,12 @@
 "use client";
 
 import { ArrowLeftRight, CalendarClock, CreditCard, Trash2 } from "lucide-react";
-import { Button } from "@frontend/components/ui/button";
-import { Badge, EmptyState, Select, Table, Td, Th, Tr } from "@frontend/components/ui/primitives";
+import { Button } from "@frontend/components/button";
+import { Badge, EmptyState, Select, Table, Td, Th, Tr } from "@frontend/components/primitives";
 import type { TransactionView } from "@backend/modules/transactions/application/queries";
-import { MoneyText } from "@frontend/shared/components/Money";
+import { MoneyText } from "@frontend/components/Money";
 import { useAction } from "@frontend/shared/useAction";
-import { deleteTransactionAction, recategorizeAction } from "./actions";
+import { deleteTransactionAction, recategorizeAction } from "./transactionsActions";
 import type { Option } from "./TransactionForm";
 
 export function TransactionTable({ items, categories }: { items: TransactionView[]; categories: Option[] }) {

@@ -13,51 +13,48 @@ separado como si fuera un servidor: **el backend no sabe que existe una interfaz
 se agrega un servidor real, `backend/` se puede mover a su propio servicio casi sin cambios.
 
 ## Árbol de directorios
+La raíz tiene solo tres carpetas: `frontend/`, `backend/` y `.github/`.
 
 ```
 ├── frontend/                        ══════ FRONTEND (lo que se ve) ══════
-│   ├── app/                         Rutas de Next.js: páginas finas que piden datos con <Query>
-│   ├── components/ui/               Piezas visuales genéricas: Button, Card, Dialog, Table…
-│   ├── modules/<modulo>/            Pantallas y formularios de cada módulo
-│   │   ├── actions.ts               Comandos del módulo (esquemas Zod → casos de uso)
-│   │   └── *.tsx                    BudgetBoard, AccountsBoard, TransactionForm, RulesBoard…
-│   ├── shared/                      Transversal a todas las pantallas
-│   │   ├── components/              Sidebar, CommandBar (Ctrl+K), MonthNav, Query, DataManagement…
+│   ├── app/                         Rutas de Next.js (una carpeta por pantalla: lo exige Next)
+│   ├── components/                  Piezas visuales: Button, Card, Dialog… + Sidebar, CommandBar (Ctrl+K), Query…
+│   ├── modules/                     Pantallas y formularios por funcionalidad (un archivo cada uno)
+│   │   ├── <modulo>Actions.ts       Comandos del módulo (esquemas Zod → casos de uso)
+│   │   └── *.tsx                    BudgetBoard, AccountsBoard, TransactionForm, RulesBoard, Charts…
+│   ├── shared/                      Lógica de la interfaz
 │   │   ├── action.ts                runAction: valida con Zod → llama al backend → persiste
 │   │   ├── data.ts                  useQuery / invalidateAll (recarga de datos)
 │   │   └── useAction.ts, month.ts, systemActions.ts
 │   ├── public/                      Archivos estáticos (sqljs/ se genera al compilar)
-│   ├── next.config.ts, postcss.config.mjs, tsconfig.json
+│   └── next.config.ts, postcss.config.mjs, tsconfig.json
 │
 ├── backend/                         ══════ BACKEND (la lógica y los datos) ══════
-│   ├── src/
-│   │   ├── shared/
-│   │   │   ├── domain/              Núcleo puro: Money, Currency, Result, YearMonth, puertos…
-│   │   │   ├── application/         UseCase<I,O>, vistas serializables (MoneyView), backup
-│   │   │   └── infrastructure/
-│   │   │       ├── persistence/     schema.ts (Drizzle), database.ts (sql.js), SqliteUnitOfWork
-│   │   │       ├── backup/          Backup JSON / archivo .sqlite
-│   │   │       ├── seed/            Datos de demostración
-│   │   │       └── di/              ★ container.ts (composition root) + browser.ts (IndexedDB)
-│   │   └── modules/<modulo>/        accounts · transactions · budgets · rules · analytics
-│   │       ├── domain/              Entidades y reglas de negocio + puertos (interfaces)
-│   │       ├── application/         Casos de uso: una clase por acción del usuario
-│   │       └── infrastructure/      Repositorios Drizzle + <modulo>.module.ts (fábrica)
-│   ├── database/migrations/         Migraciones SQL (fuente de verdad del esquema)
-│   ├── tests/integration/           Casos de uso de punta a punta (sql.js en memoria)
+│   ├── shared/
+│   │   ├── domain/                  Núcleo puro: Money, Currency, Result, YearMonth, puertos…
+│   │   ├── application/             UseCase<I,O>, vistas serializables (MoneyView), backup
+│   │   └── infrastructure/
+│   │       ├── persistence/         schema.ts (Drizzle), database.ts (sql.js), SqliteUnitOfWork
+│   │       ├── backup/              Backup JSON / archivo .sqlite
+│   │       ├── seed/                Datos de demostración
+│   │       └── di/                  ★ container.ts (composition root) + browser.ts (IndexedDB)
+│   ├── modules/<modulo>/            accounts · transactions · budgets · rules · analytics
+│   │   ├── domain/                  Entidades y reglas de negocio + puertos (interfaces)
+│   │   ├── application/             Casos de uso: una clase por acción del usuario
+│   │   └── infrastructure/          Repositorios Drizzle + <modulo>.module.ts (fábrica)
+│   ├── migrations/                  Migraciones SQL (fuente de verdad del esquema)
+│   ├── tests/                       useCases.test.ts (integración) y boundaries.test.ts (arquitectura)
 │   └── drizzle.config.ts
 │
-├── tests/architecture/              Guardián: falla si se cruza una frontera de capas
-├── docs/                            Documentación (este archivo)
-├── scripts/                         embed-migrations.ts (SQL → TS), copy-sqljs.ts (WASM → public/)
 ├── .github/workflows/pages.yml      CI: tests + build estático + publicación en GitHub Pages
-├── package.json, tsconfig.json, vitest.config.ts   Configuración común
+├── ARCHITECTURE.md, README.md       Documentación
+└── package.json, tsconfig.json, vitest.config.ts, prepare-assets.ts   Configuración y herramientas
 ```
 
 Los tests unitarios del dominio viven junto al código (`Foo.test.ts` al lado de `Foo.ts`).
 
 ## Reglas de dependencia (verificadas automáticamente)
-`tests/architecture/boundaries.test.ts` falla si se rompe alguna:
+`backend/tests/boundaries.test.ts` falla si se rompe alguna:
 
 ```
 frontend ──► backend/application, backend/domain, backend/…/di
@@ -70,7 +67,7 @@ backend/infrastructure ──► backend/application ──► backend/domain
 3. **Application no importa infrastructure:** depende solo de interfaces (puertos).
 4. **El frontend solo toca del backend** `application`, `domain` y el contenedor (`di/`); nunca los repositorios.
 
-Alias de importación: `@frontend/…` → `frontend/…` y `@backend/…` → `backend/src/…`.
+Alias de importación: `@frontend/…` → `frontend/…` y `@backend/…` → `backend/…`.
 
 ## Cómo se conectan los módulos del backend
 Los módulos no se llaman entre sí por implementaciones concretas: el consumidor define un
@@ -85,7 +82,7 @@ Los módulos no se llaman entre sí por implementaciones concretas: el consumido
 | `ITransactionDeletedHandler` (transactions) | `SubscriptionPaymentCleanup` (budgets) | Borrar el gasto reabre la suscripción |
 
 ## Contenedor de Inyección de Dependencias
-`backend/src/shared/infrastructure/di/container.ts`:
+`backend/shared/infrastructure/di/container.ts`:
 
 1. `buildContainer({ sqlJs, storage?, clock? })` recibe el motor SQLite/WASM ya inicializado, carga la base
    guardada, aplica migraciones pendientes (`user_version`) y arma el `SharedKernel` (UoW, IdGenerator, Clock, Settings).
@@ -104,6 +101,7 @@ repositorios → `Result` → persistencia en IndexedDB → `invalidateAll()` (l
 | Componentes React | `PascalCase.tsx` | `BudgetBoard.tsx` |
 | Entidades y casos de uso | `PascalCase.ts` | `Account.ts`, `RecordExpenseUseCase.ts` |
 | Puertos / implementaciones | `I…` / prefijo de tecnología | `IAccountRepository` / `DrizzleAccountRepository` |
+| Comandos del frontend | `<modulo>Actions.ts` | `budgetsActions.ts` |
 | Hooks | `useXxx` | `useQuery`, `useAction` |
 | Utilidades | `camelCase.ts` | `helpers.ts`, `mappers.ts` |
 | Carpetas | minúsculas | `domain/`, `application/` |
@@ -118,7 +116,7 @@ repositorios → `Result` → persistencia en IndexedDB → `invalidateAll()` (l
 - **Cuotas**: la tarjeta registra la deuda total al comprar; el presupuesto recibe cada cuota en *su* mes.
 - **Multimoneda**: cada transacción guarda su monto en la moneda de la cuenta y en moneda base (al tipo de cambio del momento).
 - **Rollover**: el sobrante positivo pasa al mes siguiente; el sobregiro se descuenta de “Listo para asignar”.
-- **Un solo `package.json`**: frontend y backend comparten dependencias y se compilan juntos
+- **Pocas carpetas**: un solo `package.json`; frontend y backend se compilan juntos
   (`next dev frontend` / `next build frontend`), sin la complejidad de workspaces.
 
 ## Si algún día se agrega un servidor real

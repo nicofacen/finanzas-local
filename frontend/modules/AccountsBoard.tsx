@@ -2,13 +2,13 @@
 
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@frontend/components/ui/button";
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Field, Input, Progress, Select } from "@frontend/components/ui/primitives";
+import { Button } from "@frontend/components/button";
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Field, Input, Progress, Select } from "@frontend/components/primitives";
 import type { AccountView, ExchangeRateView } from "@backend/modules/accounts/application/useCases";
 import { ACCOUNT_TYPE_POLICIES, ACCOUNT_TYPES, type AccountType } from "@backend/modules/accounts/domain/AccountType";
-import { MoneyText } from "@frontend/shared/components/Money";
+import { MoneyText } from "@frontend/components/Money";
 import { formToObject, useAction } from "@frontend/shared/useAction";
-import { createAccountAction, setExchangeRateAction } from "./actions";
+import { createAccountAction, setExchangeRateAction } from "./accountsActions";
 
 const CURRENCIES = ["ARS", "USD", "EUR", "BRL", "UYU", "CLP", "MXN"];
 

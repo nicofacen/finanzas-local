@@ -2,16 +2,16 @@
 
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@frontend/components/ui/button";
-import { cn } from "@frontend/components/ui/cn";
-import { Card, CardContent, Field, Input, Select } from "@frontend/components/ui/primitives";
+import { Button } from "@frontend/components/button";
+import { cn } from "@frontend/components/cn";
+import { Card, CardContent, Field, Input, Select } from "@frontend/components/primitives";
 import { formToObject, useAction } from "@frontend/shared/useAction";
 import {
   createInstallmentPurchaseAction,
   recordExpenseAction,
   recordIncomeAction,
   transferAction,
-} from "./actions";
+} from "./transactionsActions";
 
 export interface Option {
   id: string;

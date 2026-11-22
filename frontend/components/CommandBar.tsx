@@ -4,11 +4,11 @@ import { ArrowRight, CornerDownLeft, Search, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Badge } from "@frontend/components/ui/primitives";
-import { Dialog } from "@frontend/components/ui/dialog";
-import { cn } from "@frontend/components/ui/cn";
+import { Badge } from "@frontend/components/primitives";
+import { Dialog } from "@frontend/components/dialog";
+import { cn } from "@frontend/components/cn";
 import type { QuickEntryInterpretation } from "@backend/modules/transactions/application/QuickEntryUseCases";
-import { previewQuickEntryAction, quickEntryAction } from "@frontend/modules/transactions/actions";
+import { previewQuickEntryAction, quickEntryAction } from "@frontend/modules/transactionsActions";
 import { NAV_ITEMS } from "./Sidebar";
 
 const EXAMPLES = ["15000 Supermercado Débito", "+850000 Sueldo banco", "usd 20 Netflix visa", "120000 Zapatillas visa 6c ayer"];

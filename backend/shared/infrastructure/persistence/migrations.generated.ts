@@ -1,4 +1,4 @@
-// GENERADO por scripts/embed-migrations.ts — no editar a mano.
+// GENERADO por prepare-assets.ts — no editar a mano.
 export const MIGRATIONS: readonly (readonly string[])[] = [
   [
     "CREATE TABLE `accounts` (\n\t`id` text PRIMARY KEY NOT NULL,\n\t`name` text NOT NULL,\n\t`type` text NOT NULL,\n\t`currency` text NOT NULL,\n\t`balance_minor` integer NOT NULL,\n\t`credit_limit_minor` integer,\n\t`closing_day` integer,\n\t`aliases` text DEFAULT '[]' NOT NULL,\n\t`archived` integer DEFAULT false NOT NULL,\n\t`created_at` text NOT NULL\n);",

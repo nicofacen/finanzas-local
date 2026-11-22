@@ -1,11 +1,11 @@
 import { AlertTriangle, CheckCircle2, Coffee, Gauge, Info, TrendingDown, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import { buttonVariants } from "@frontend/components/ui/button";
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, EmptyState } from "@frontend/components/ui/primitives";
+import { buttonVariants } from "@frontend/components/button";
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, EmptyState } from "@frontend/components/primitives";
 import type { DashboardView as Dashboard } from "@backend/modules/analytics/application/GetDashboardUseCase";
-import { MoneyText } from "@frontend/shared/components/Money";
-import { MonthNav, PageHeader } from "@frontend/shared/components/MonthNav";
-import { CategoryBars, FlowsChart, PaceChart, ProjectionBars } from "./components/Charts";
+import { MoneyText } from "@frontend/components/Money";
+import { MonthNav, PageHeader } from "@frontend/components/MonthNav";
+import { CategoryBars, FlowsChart, PaceChart, ProjectionBars } from "./Charts";
 
 const PACE_LABEL = {
   under: { text: "Por debajo del ritmo", tone: "positive", icon: CheckCircle2 },
