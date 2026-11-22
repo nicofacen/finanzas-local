@@ -7,13 +7,13 @@
   "scripts": {
     "prepare:assets": "tsx scripts/embed-migrations.ts && tsx scripts/copy-sqljs.ts",
     "predev": "npm run prepare:assets",
-    "dev": "next dev",
+    "dev": "next dev frontend",
     "prebuild": "npm run prepare:assets",
-    "build": "next build",
+    "build": "next build frontend",
     "lint": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:generate": "drizzle-kit generate && tsx scripts/embed-migrations.ts"
+    "db:generate": "drizzle-kit generate --config backend/drizzle.config.ts && tsx scripts/embed-migrations.ts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
